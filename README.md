@@ -1,4 +1,4 @@
-Creating documentation and an architecture overview for your API gateway is essential for clarity, maintenance, and onboarding new developers. Below is a structured way to document your API gateway project, along with a suggested architecture diagram.
+
 
 ### API Gateway Documentation
 
