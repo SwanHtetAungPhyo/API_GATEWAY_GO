@@ -7,7 +7,6 @@ import (
 
 func InitRouter() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/register", handlers.Registry)
 	mux.HandleFunc("/", handlers.Forwardding)
 	mux.HandleFunc("/routes", handlers.RoutesListing)
 	return mux

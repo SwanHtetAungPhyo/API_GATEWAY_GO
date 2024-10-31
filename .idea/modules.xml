@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/go-services.iml" filepath="$PROJECT_DIR$/go-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/project.iml" filepath="$PROJECT_DIR$/.idea/project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/serviceTwo.iml" filepath="$PROJECT_DIR$/serviceTwo.iml" />
     </modules>
   </component>
 </project>

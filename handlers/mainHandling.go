@@ -4,49 +4,46 @@ import (
 	"encoding/json"
 	"github.com/SwanHtetAungPhyo/api-gateway/models"
 	"github.com/SwanHtetAungPhyo/api-gateway/services"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"sync"
+	"gopkg.in/yaml.v2"
 )
 
 var serviceRegistry = make(map[string]models.Services)
 var mu = &sync.Mutex{}
 
-func Registry(writer http.ResponseWriter, request *http.Request) {
-	if request.Method != http.MethodPost {
-		http.Error(writer, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
+func LoadServicesFromYAML(filePath string) error {
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
 	}
 
-	var newService models.Services
-	if err := json.NewDecoder(request.Body).Decode(&newService); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+	var services struct {
+		Services []models.Services `yaml:"services"`
 	}
 
-	if newService.BasePath == "" {
-		http.Error(writer, "Base path cannot be empty", http.StatusBadRequest)
-		return
+	err = yaml.Unmarshal(data, &services)
+	if err != nil {
+		return err
 	}
 
 	mu.Lock()
 	defer mu.Unlock()
 
-	existingServices, exist := serviceRegistry[newService.BasePath]
-	if exist {
+	for _, service := range services.Services {
+		for i := range service.Instances {
+			if service.Instances[i].Connections < 0 {
+				service.Instances[i].Connections = 0
+			}
+		}
 
-		existingServices.Instances = append(existingServices.Instances, newService.Instances...)
-		serviceRegistry[newService.BasePath] = existingServices
-	} else {
-
-		serviceRegistry[newService.BasePath] = newService
+		serviceRegistry[service.BasePath] = service
+		log.Printf("Registered service: %s with base path: %s", service.Name, service.BasePath)
 	}
 
-	writer.WriteHeader(http.StatusCreated)
-	err := json.NewEncoder(writer).Encode(&newService)
-	if err != nil {
-		http.Error(writer, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
+	return nil
 }
 
 func Forwardding(writer http.ResponseWriter, request *http.Request) {

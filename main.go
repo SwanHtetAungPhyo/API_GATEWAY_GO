@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/SwanHtetAungPhyo/api-gateway/handlers"
 	"github.com/SwanHtetAungPhyo/api-gateway/utils"
 	"github.com/joho/godotenv"
 	"log"
@@ -9,8 +10,12 @@ import (
 )
 
 func main() {
+	err := handlers.LoadServicesFromYAML("./gateway.yaml")
+	if err != nil {
+		log.Fatalf("Error loading services: %v", err)
+	}
 	router := utils.InitRouter()
-	err := godotenv.Load()
+	err = godotenv.Load()
 	if err != nil {
 		return
 	}

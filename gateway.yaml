@@ -1,0 +1,24 @@
+services:
+  - name: "ServiceA"
+    basePath: "/serviceA"
+    rateLimit: 100
+    instances:
+      - url: "http://serviceA-instance1:8080"
+        connections: 0
+        methods: "GET"
+
+  - name: "ServiceB"
+    basePath: "/serviceB"
+    rateLimit: 50
+    instances:
+      - url: "http://localhost:8081"
+        connections: 0
+        methods: "GET"
+
+  - name: "ServiceC"
+    basePath: "/serviceC"
+    rateLimit: 150
+    instances:
+      - url: "http://localhost:8082"
+        connections: 0
+        methods: "POST"
